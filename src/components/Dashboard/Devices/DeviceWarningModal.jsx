@@ -40,7 +40,7 @@ const DeviceWarningModal = ({ isOpen, onClose, onConfirm, theme, actionType, dev
       <div className="space-y-8">
         <div className="space-y-2">
           <div className="flex items-center gap-3">
-             <div className={`w-2 h-2 rounded-full ${config.confirmColor} animate-pulse`} />
+             <div className={`w-2 h-2 rounded-full ${config.confirmColor}`} />
              <h3 className={`text-xl font-black tracking-tighter uppercase ${config.textColor}`}>{config.title}</h3>
           </div>
           <p className="text-[11px] font-mono opacity-40 uppercase tracking-widest leading-relaxed">

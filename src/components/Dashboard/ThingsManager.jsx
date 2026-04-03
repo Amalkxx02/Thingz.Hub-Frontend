@@ -87,7 +87,7 @@ const ThingsManager = () => {
               </div>
 
               <div className="md:col-span-3 text-left md:text-center">
-                <span className={`text-[9px] font-mono font-black uppercase tracking-widest ${thing.is_active ? 'text-emerald-500 animate-pulse' : 'text-neutral-500'}`}>
+                <span className={`text-[9px] font-mono font-black uppercase tracking-widest ${thing.is_active ? 'text-emerald-500' : 'text-neutral-500'}`}>
                   {thing.state}
                 </span>
               </div>

@@ -43,7 +43,7 @@ const ProfileDropdown = () => {
 
       {/* Dropdown Card */}
       <div className={`absolute top-full right-0 mt-3 w-64 max-sm:fixed max-sm:left-4 max-sm:right-4 max-sm:w-auto origin-top-right transition-all duration-300 transform ${isOpen ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'}`}>
-        <div className={`p-4 md:p-6 rounded-2xl border-2 shadow-2xl backdrop-blur-xl ${theme === 'dark' ? 'bg-[#0a0a0ab4] border-neutral-800' : 'bg-white/80 border-neutral-200'}`}>
+        <div className={`p-4 md:p-6 rounded-2xl border-2 shadow-2xl ${theme === 'dark' ? 'bg-[#0a0a0a] border-neutral-800' : 'bg-white border-neutral-200'}`}>
           <div className="space-y-4 md:space-y-6">
             <div className="flex justify-between items-start">
               <div className="space-y-1">
@@ -55,7 +55,6 @@ const ProfileDropdown = () => {
             </div>
 
             <div className="pt-4 border-t border-neutral-500/10 space-y-2">
-              <p className="text-[8px] font-mono opacity-30 uppercase tracking-widest">Session_Protocol: {isOpen ? 'ACTIVE' : 'IDLE'}</p>
               <button 
                 onClick={logout}
                 className="w-full py-4 bg-rose-500/10 hover:bg-rose-500 text-rose-500 hover:text-white border border-rose-500/20 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 shadow-xl shadow-rose-900/5"

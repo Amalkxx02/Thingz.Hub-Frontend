@@ -36,7 +36,7 @@ const DeviceRow = ({ device, theme, onToggleStatus, onRevoke, onRotateKey, onDel
 
       {/* Connection State (is_active) */}
       <div className="md:col-span-2 text-left md:text-center">
-        <span className={`text-[9px] font-mono font-black uppercase tracking-widest ${device.is_active ? 'text-emerald-500 animate-pulse' : 'text-neutral-500'}`}>
+        <span className={`text-[9px] font-mono font-black uppercase tracking-widest ${device.is_active ? 'text-emerald-500' : 'text-neutral-500'}`}>
           {device.is_active ? 'ACTIVE_LINK' : 'IDLE_STATE'}
         </span>
       </div>
