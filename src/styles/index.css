@@ -1,0 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=SUSE+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+@import "tailwindcss";
+
+/* @variant dark (&:where(.dark, .dark *)); */
+
+html,body,#root {
+  width: 100%; /* Does not include scrollbar width, preventing horizontal drift */
+  height: 100%; 
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "SUSE Mono", sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  overflow-x: hidden; /* Only locks horizontal, allowing natural vertical if ever needed */
+}
+
+/* IoT Dot Grid Utility */
+.iot-dots {
+  background-image: radial-gradient(circle, currentColor 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Fallback verification styles */
+.dark body {
+  background-color: #080808;
+  color: white;
+}
