@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { authService } from '../services/authService';
 import { userService } from '../services/userService';
+import { websocketService } from '../services/websocketService';
 import { useToast } from './ToastContext';
 
 const AuthContext = createContext();
@@ -15,6 +16,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const profile = await userService.getProfile();
       setUser({ ...profile, is_onboarded: true });
+      websocketService.connect();
     } catch (error) {
       setUser(null);
     } finally {
@@ -45,6 +47,8 @@ export const AuthProvider = ({ children }) => {
       } else {
         setUser(response.user);
       }
+      
+      websocketService.connect();
       
       showToast('ACCESS_GRANTED: WELCOME_TO_HUB', 'success');
       return response;
@@ -95,6 +99,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     showToast('SESSION_ENDED: HUB_LOGOUT', 'warning');
+    websocketService.disconnect();
     authService.logout();
   };
 

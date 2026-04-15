@@ -1,50 +1,32 @@
 import React from 'react';
-import DeviceModal from './DeviceModal';
+import ThingModal from './ThingModal';
 
-const DeviceWarningModal = ({ isOpen, onClose, onConfirm, theme, actionType, deviceName, isProcessing = false }) => {
+const ThingWarningModal = ({ isOpen, onClose, onConfirm, theme, actionType, thingName, isProcessing = false }) => {
   const getActionConfig = () => {
     switch (actionType) {
-      case 'REVOKE':
-        return {
-          title: 'AUTHORIZATION_REVOCATION_WARNING',
-          message: `Are you sure you want to revoke authorization for node [${deviceName}]? This will immediately terminate all active cryptographic links.`,
-          confirmText: 'INITIALIZE_REVOCATION',
-          confirmColor: 'bg-rose-500',
-          textColor: 'text-rose-500'
-        };
-      case 'REVOKE_ALL':
-        return {
-          title: 'MASS_SYSTEM_REVOCATION_CRITICAL',
-          message: 'CRITICAL: You are about to revoke ALL active device authorizations. Every connected hardware node will be immediately disconnected. This action cannot be undone without manual re-authorization.',
-          confirmText: 'EXECUTE_MASS_REVOCATION',
-          confirmColor: 'bg-rose-600',
-          textColor: 'text-rose-600'
-        };
-      case 'ROTATE_KEY':
-        return {
-          title: 'SECURITY_TOKEN_ROTATION',
-          message: `Rotating the secret key for [${deviceName}] will invalidate the current token. You must update the hardware node with the new key immediately to prevent link failure.`,
-          confirmText: 'ROTATE_SECRET_TOKEN',
-          confirmColor: 'bg-emerald-500',
-          textColor: 'text-emerald-500'
-        };
       case 'DELETE':
         return {
-          title: 'PERMANENT_DECOMMISSION_NOTICE',
-          message: `CRITICAL: You are about to permanently delete [${deviceName}] from the system inventory. This action is irreversible and all historical telemetry links will be severed.`,
-          confirmText: 'PURGE_SYSTEM_RECORD',
+          title: 'VIRTUAL_OBJECT_PURGE_WARNING',
+          message: `CRITICAL: You are about to permanently delete [${thingName}] from the virtual inventory. All historical data streams associated with this entity will be terminated.`,
+          confirmText: 'EXECUTE_PURGE_SEQUENCE',
           confirmColor: 'bg-rose-600',
           textColor: 'text-rose-600'
         };
       default:
-        return {};
+        return {
+          title: 'SYSTEM_ACTION_CONFIRMATION',
+          message: 'Please confirm the pending operation.',
+          confirmText: 'CONFIRM',
+          confirmColor: 'bg-emerald-500',
+          textColor: 'text-emerald-500'
+        };
     }
   };
 
   const config = getActionConfig();
 
   return (
-    <DeviceModal isOpen={isOpen} onClose={onClose} theme={theme}>
+    <ThingModal isOpen={isOpen} onClose={onClose} theme={theme}>
       <div className="space-y-6">
         <div className="space-y-2">
           <div className="flex items-start gap-3">
@@ -52,7 +34,7 @@ const DeviceWarningModal = ({ isOpen, onClose, onConfirm, theme, actionType, dev
              <h3 className={`text-base md:text-xl font-black tracking-tight uppercase leading-snug ${config.textColor}`}>{config.title}</h3>
           </div>
           <p className="text-[10px] font-mono opacity-40 uppercase tracking-widest leading-relaxed pl-5 break-all">
-             SYSTEM_ID: {deviceName} // STATUS: PENDING_CONFIRMATION
+             ENTITY_ID: {thingName} // STATUS: PENDING_CONFIRMATION
           </p>
         </div>
 
@@ -86,8 +68,8 @@ const DeviceWarningModal = ({ isOpen, onClose, onConfirm, theme, actionType, dev
           </button>
         </div>
       </div>
-    </DeviceModal>
+    </ThingModal>
   );
 };
 
-export default DeviceWarningModal;
+export default ThingWarningModal;

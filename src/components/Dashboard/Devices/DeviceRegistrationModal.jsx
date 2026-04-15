@@ -88,33 +88,46 @@ const DeviceRegistrationModal = ({ isOpen, onClose, theme, onRegister, initialRe
           </form>
         </>
       ) : (
-        <div className="space-y-6">
-          <div className="flex justify-between items-center">
-            <h3 className="text-xl font-black tracking-tighter uppercase text-emerald-500">Node_Authorized_Success</h3>
-            <button onClick={resetAndClose} className="text-[10px] font-mono opacity-40 hover:opacity-100 uppercase">[ACKNOWLEDGE]</button>
+        <div className="space-y-5">
+          <div className="flex flex-wrap justify-between items-start gap-2">
+            <h3 className="text-base md:text-xl font-black tracking-tight uppercase text-emerald-500 leading-snug">Node_Authorized_Success</h3>
+            <button onClick={resetAndClose} className="text-[10px] font-mono opacity-40 hover:opacity-100 uppercase shrink-0">[ACKNOWLEDGE]</button>
           </div>
-          
-          <div className="space-y-4">
+
+          <div className="space-y-3">
             {/* Device ID Display */}
-            <div className={`space-y-1 p-5 rounded-2xl font-mono ${theme === 'dark' ? 'bg-black/40' : 'bg-white border'}`}>
+            <div className={`space-y-2 p-4 md:p-5 rounded-2xl font-mono ${theme === 'dark' ? 'bg-black/40' : 'bg-white border'}`}>
               <p className="text-[9px] opacity-30 uppercase tracking-widest">Permanent_Device_ID</p>
-              <div className="flex items-center justify-between gap-4">
-                <p className="text-sm font-bold text-neutral-500 break-all select-all">{registrationResult.device_id}</p>
-                <button onClick={() => navigator.clipboard.writeText(registrationResult.device_id)} className="shrink-0 p-2 hover:bg-neutral-500/10 rounded-lg">⎘</button>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                <p className="text-xs md:text-sm font-bold text-neutral-500 break-all select-all flex-1">{registrationResult.device_id}</p>
+                <button
+                  onClick={() => navigator.clipboard.writeText(registrationResult.device_id)}
+                  className="self-end sm:self-center shrink-0 px-3 py-1.5 text-[9px] font-black uppercase tracking-widest border border-neutral-500/20 hover:bg-neutral-500/10 rounded-lg transition-all"
+                >
+                  ⎘ Copy
+                </button>
               </div>
             </div>
 
             {/* API Key Display */}
-            <div className={`space-y-1 p-5 rounded-2xl font-mono ${theme === 'dark' ? 'bg-emerald-500/5' : 'bg-emerald-50 border-emerald-500/20'}`}>
-              <p className="text-[9px] opacity-30 uppercase tracking-widest text-emerald-500/60">Encoded_Secret_API_Key (COPY_NOW)</p>
-              <div className="flex items-center justify-between gap-4">
-                <p className="text-sm font-bold text-emerald-500 break-all select-all">{registrationResult.api_key}</p>
-                <button onClick={() => navigator.clipboard.writeText(registrationResult.api_key)} className="shrink-0 p-2 hover:bg-emerald-500/10 rounded-lg">⎘</button>
+            <div className={`space-y-2 p-4 md:p-5 rounded-2xl font-mono border ${theme === 'dark' ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-emerald-50 border-emerald-500/20'}`}>
+              <div className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <p className="text-[9px] uppercase tracking-widest text-emerald-500/60 font-bold">Encoded_Secret_API_Key — COPY_NOW</p>
+              </div>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                <p className="text-xs md:text-sm font-bold text-emerald-500 break-all select-all flex-1">{registrationResult.api_key}</p>
+                <button
+                  onClick={() => navigator.clipboard.writeText(registrationResult.api_key)}
+                  className="self-end sm:self-center shrink-0 px-3 py-1.5 text-[9px] font-black uppercase tracking-widest border border-emerald-500/30 hover:bg-emerald-500/10 text-emerald-500 rounded-lg transition-all"
+                >
+                  ⎘ Copy
+                </button>
               </div>
             </div>
 
-            <p className="text-[8px] font-mono opacity-40 uppercase tracking-widest leading-relaxed">
-              WARNING: THE_API_KEY_WILL_NEVER_BE_SHOWN_AGAIN. <br />
+            <p className="text-[9px] font-mono opacity-60 uppercase tracking-widest leading-relaxed">
+              ⚠ API_KEY_WILL_NEVER_BE_SHOWN_AGAIN. COPY_BEFORE_CLOSING. <br />
               DEVICE_ID_IS_PERMANENT_IDENTITY_FOR_THIS_NODE.
             </p>
           </div>

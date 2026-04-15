@@ -1,27 +1,58 @@
 @import url('https://fonts.googleapis.com/css2?family=SUSE+Mono:ital,wght@0,100..800;1,100..800&display=swap');
 @import "tailwindcss";
 
-/* @variant dark (&:where(.dark, .dark *)); */
+@theme {
+  /* Dynamic Axis: Primary Hub Identity Tokens */
+  --color-hub-app-bg: var(--hub-app-bg);
+  --color-hub-card-bg: var(--hub-card-bg);
+  --color-hub-surface-bg: var(--hub-surface-bg);
+  --color-hub-border: var(--hub-border);
+  --color-hub-text-primary: var(--hub-text-primary);
+  --color-hub-text-muted: var(--hub-text-muted);
+  --color-hub-accent: var(--hub-accent);
+  
+  /* Tactical Font Engine */
+  --font-mono: "SUSE Mono", monospace;
+  --font-sans: "SUSE Mono", sans-serif;
+}
+
+:root {
+  /* LIGHTMODE_ENGINE: Core High_Spectrum Defaults */
+  --hub-app-bg: #F8FAFC;
+  --hub-card-bg: #FFFFFF;
+  --hub-surface-bg: #F1F5F9;
+  --hub-border: #E2E8F0;
+  --hub-text-primary: #0F172A;
+  --hub-text-muted: #64748B;
+  --hub-accent: #10B981;
+}
+
+.dark {
+  /* DARKMODE_ENGINE: Core Deep_Slate Defaults */
+  --hub-app-bg: #020617;      /* The Application Backdrop */
+  --hub-card-bg: #1E293B;     /* The Management Row/Card */
+  --hub-surface-bg: #334155;  /* Inner Identity Elements */
+  --hub-border: #475569;      /* Tactical Boundary Lines */
+  --hub-text-primary: #F8FAFC;/* High-Contrast Readouts */
+  --hub-text-muted: #CBD5E1;   /* Secondary Metadata */
+  --hub-accent: #10B981;      /* Emerald Intelligence Color */
+}
 
 html,body,#root {
-  width: 100%; /* Does not include scrollbar width, preventing horizontal drift */
-  height: 100%; 
+  width: 100%; 
+  height: 100dvh;
   box-sizing: border-box;
   margin: 0;
   padding: 0;
   font-family: "SUSE Mono", sans-serif;
-  transition: background-color 0.3s ease, color 0.3s ease;
-  overflow-x: hidden; /* Only locks horizontal, allowing natural vertical if ever needed */
+  transition: background-color 0.30s ease, color 0.3s ease;
+  overflow: hidden; 
+  background-color: var(--hub-app-bg);
+  color: var(--hub-text-primary);
 }
 
 /* IoT Dot Grid Utility */
 .iot-dots {
   background-image: radial-gradient(circle, currentColor 1px, transparent 1px);
   background-size: 24px 24px;
-}
-
-/* Fallback verification styles */
-.dark body {
-  background-color: #080808;
-  color: white;
 }

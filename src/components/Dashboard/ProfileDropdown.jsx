@@ -41,23 +41,23 @@ const ProfileDropdown = () => {
         </div>
       </button>
 
-      {/* Dropdown Card */}
-      <div className={`absolute top-full right-0 mt-3 w-64 max-sm:fixed max-sm:left-4 max-sm:right-4 max-sm:w-auto origin-top-right transition-all duration-300 transform ${isOpen ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'}`}>
-        <div className={`p-4 md:p-6 rounded-2xl border-2 shadow-2xl ${theme === 'dark' ? 'bg-[#0a0a0a] border-neutral-800' : 'bg-white border-neutral-200'}`}>
+      {/* Dropdown Card - Fixed Mobile Viewport Strategy */}
+      <div className={`absolute top-full right-0 mt-3 w-72 max-sm:fixed max-sm:top-14 max-sm:left-4 max-sm:right-4 max-sm:w-auto origin-top-right transition-all duration-300 transform ${isOpen ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'}`}>
+        <div className={`p-5 md:p-6 rounded-2xl border-2 shadow-2xl overflow-y-auto max-h-[80vh] custom-scrollbar ${theme === 'dark' ? 'bg-[#0a0a0a] border-neutral-800' : 'bg-white border-neutral-200'}`}>
           <div className="space-y-4 md:space-y-6">
-            <div className="flex justify-between items-start">
-              <div className="space-y-1">
+            <div className="flex justify-between items-start gap-4">
+              <div className="space-y-1 overflow-hidden">
                 <p className="text-[9px] font-black uppercase tracking-[0.3em] opacity-30">Identity_Token</p>
-                <h3 className="text-sm md:text-base font-black tracking-tighter truncate max-w-[140px]">{user?.name}</h3>
+                <h3 className="text-sm md:text-base font-black tracking-tighter truncate">{user?.name}</h3>
                 <p className="text-[9px] md:text-[10px] font-mono opacity-40 truncate">{user?.email}</p>
               </div>
-              <ThemeToggle className="scale-90" />
+              <ThemeToggle className="scale-90 shrink-0" />
             </div>
 
             <div className="pt-4 border-t border-neutral-500/10 space-y-2">
               <button 
                 onClick={logout}
-                className="w-full py-4 bg-rose-500/10 hover:bg-rose-500 text-rose-500 hover:text-white border border-rose-500/20 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 shadow-xl shadow-rose-900/5"
+                className="w-full py-3 md:py-4 px-2 bg-rose-500/10 hover:bg-rose-500 text-rose-500 hover:text-white border border-rose-500/20 rounded-xl text-[9px] md:text-[10px] font-black uppercase tracking-wider transition-all duration-300 shadow-xl shadow-rose-900/5 truncate"
               >
                 Terminal_Disconnect
               </button>

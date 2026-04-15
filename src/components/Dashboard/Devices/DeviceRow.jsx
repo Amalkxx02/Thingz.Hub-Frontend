@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const DeviceRow = ({ device, theme, onToggleStatus, onRevoke, onRotateKey, onDelete }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
   const getDeviceTypeLabel = (type) => {
     switch (type) {
       case 0: return 'HUB_NODE';
@@ -11,82 +13,105 @@ const DeviceRow = ({ device, theme, onToggleStatus, onRevoke, onRotateKey, onDel
 
   return (
     <div 
-      className={`grid grid-cols-1 md:grid-cols-12 items-center gap-4 p-4 md:p-6 rounded-2xl border-b transition-all duration-300 group ${theme === 'dark' ? 'bg-[#0a0a0a]/40 border-neutral-900/50 hover:bg-[#0f0f0f] hover:border-emerald-500/10' : 'bg-white border-neutral-100 hover:bg-neutral-50 hover:border-emerald-500/10 shadow-sm shadow-neutral-100'}`}
+      className={`flex flex-col rounded-xl border transition-all duration-500 overflow-hidden ${isExpanded ? 'bg-hub-accent/5 border-hub-accent/20 shadow-[0_0_30px_rgba(16,185,129,0.05)]' : 'bg-hub-card-bg border-hub-border hover:border-hub-accent/10 shadow-sm'}`}
     >
-      {/* Node Identity */}
-      <div className="col-span-4 flex flex-col gap-1">
-        <div className="flex items-center gap-3">
-          <div className={`w-1.5 h-1.5 rounded-full ${device.revoked ? 'bg-rose-500' : 'bg-emerald-500'}`} />
-          <h4 className="text-sm md:text-base font-black tracking-tighter uppercase truncate">{device.name}</h4>
+      {/* Main Interaction Surface */}
+      <div 
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="group flex flex-row items-center p-4 cursor-pointer select-none"
+      >
+        {/* Identity Column */}
+        <div className="flex items-center gap-4 min-w-[260px] md:min-w-[320px]">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border bg-hub-surface-bg border-hub-border">
+            <div className={`w-1.5 h-1.5 rounded-full ${device.revoked ? 'bg-rose-500' : 'bg-hub-accent shadow-[0_0_8px_var(--hub-accent)]'}`} />
+          </div>
+          <div className="flex flex-col gap-0.5 overflow-hidden text-left">
+            <h4 className="text-[11px] font-black uppercase tracking-widest truncate">
+              {device.name}
+            </h4>
+            <span className={`text-[7px] font-mono uppercase tracking-[0.3em] truncate opacity-20 ${isExpanded ? 'opacity-60 text-hub-accent' : ''}`}>
+              UID_CORE::{device.id}
+            </span>
+          </div>
         </div>
-        <p className="text-[8px] font-mono opacity-30 uppercase tracking-widest pl-4 hidden md:block">LOC: GATEWAY_{device.id.substring(0,4)}</p>
-      </div>
 
-      {/* Type Class */}
-      <div className="md:col-span-2 text-left md:text-center">
-        <span className={`px-2 py-1 rounded text-[8px] font-mono font-bold tracking-widest border transition-colors ${theme === 'dark' ? 'bg-black/40 border-white/5 opacity-50' : 'bg-neutral-100 border-neutral-200 opacity-60'} group-hover:opacity-100 uppercase`}>
-          {getDeviceTypeLabel(device.type)}
-        </span>
-      </div>
-
-      {/* Device ID */}
-      <div className="md:col-span-2 text-left md:text-center text-[10px] font-mono opacity-40 uppercase tracking-widest">
-        {device.id.substring(0, 8)}...
-      </div>
-
-      {/* Connection State (is_active) */}
-      <div className="md:col-span-2 text-left md:text-center">
-        <span className={`text-[9px] font-mono font-black uppercase tracking-widest ${device.is_active ? 'text-emerald-500' : 'text-neutral-500'}`}>
-          {device.is_active ? 'ACTIVE_LINK' : 'IDLE_STATE'}
-        </span>
-      </div>
-
-      {/* Dynamic Actions */}
-      <div className="md:col-span-2 text-right opacity-0 group-hover:opacity-100 transition-all">
-        <div className="flex justify-end gap-2">
-          {!device.revoked ? (
-            <>
-              <button 
-                onClick={onToggleStatus}
-                className={`px-3 py-1.5 rounded-lg border transition-colors text-[9px] font-black uppercase tracking-widest ${device.is_active ? 'border-amber-500/20 hover:bg-amber-500/10 text-amber-500' : 'border-emerald-500/20 hover:bg-emerald-500/10 text-emerald-500'}`}
-                title={device.is_active ? "Deactivate Link Connection" : "Activate Link Connection"}
-              >
-                {device.is_active ? 'Deactivate' : 'Activate'}
-              </button>
-              <button 
-                onClick={onRevoke}
-                className={`px-3 py-1.5 rounded-lg border border-rose-500/20 hover:bg-rose-500/10 transition-colors text-rose-500 text-[9px] font-black uppercase tracking-widest`}
-                title="Revoke Node Authorization"
-              >
-                Revoke
-              </button>
-              <button 
-                onClick={onRotateKey}
-                className={`px-3 py-1.5 rounded-lg border border-emerald-500/10 hover:bg-emerald-500/5 transition-colors text-emerald-500/70 hover:text-emerald-500 text-[9px] font-black uppercase tracking-widest`}
-                title="Regenerate Security Token"
-              >
-                Rotate_Key
-              </button>
-            </>
-          ) : (
-            <>
-              <button 
-                onClick={onRotateKey}
-                className={`px-3 py-1.5 rounded-lg border border-emerald-500/20 hover:bg-emerald-500/10 transition-colors text-emerald-500 text-[9px] font-black uppercase tracking-widest`}
-                title="Restore Authorization with New Token"
-              >
-                Rotate_Key
-              </button>
-              <button 
-                onClick={onDelete}
-                className={`px-2 py-1.5 rounded-lg border border-neutral-500/10 hover:bg-rose-500/10 transition-colors text-neutral-500 hover:text-rose-500 text-[9px] font-black uppercase`}
-                title="Purge Node From Inventory"
-              >
-                ⌧
-              </button>
-            </>
-          )}
+        {/* Attributes Grid */}
+        <div className="flex-grow grid grid-cols-4 gap-4 px-6 md:px-12">
+          <div className="flex flex-col gap-1">
+            <span className="text-[7px] font-mono opacity-20 uppercase tracking-widest">Logic_Class</span>
+            <span className="text-[9px] font-bold uppercase tracking-tighter opacity-60">
+              {getDeviceTypeLabel(device.type)}
+            </span>
+          </div>
         </div>
+
+        {/* Action Pillar */}
+        <div className="flex items-center gap-4 pl-6 border-l border-hub-border">
+          <div className="md:flex flex-col items-end gap-1">
+             <div className="flex bg-hub-text-primary/5 rounded-md p-0.5">
+                <button 
+                  onClick={(e) => { e.stopPropagation(); onToggleStatus(); }}
+                  className={`h-5 px-3 rounded text-[7px] font-black uppercase transition-all ${device.is_active ? 'bg-hub-accent text-black' : 'opacity-40 hover:opacity-100'}`}
+                >
+                  On
+                </button>
+                <button 
+                  onClick={(e) => { e.stopPropagation(); onToggleStatus(); }}
+                  className={`h-5 px-3 rounded text-[7px] font-black uppercase transition-all ${!device.is_active ? 'bg-hub-text-primary/40 text-hub-text-primary' : 'opacity-40 hover:opacity-100'}`}
+                >
+                  Off
+                </button>
+             </div>
+             <span className="text-[7px] font-mono opacity-20 uppercase text-right">System_State</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Expanded Security Module */}
+      <div className={`overflow-hidden transition-all duration-700 ease-in-out ${isExpanded ? 'max-h-[300px] opacity-100' : 'max-h-0 opacity-0'}`}>
+         <div className="p-6 border-t border-dashed border-hub-border grid grid-cols-1 md:grid-cols-2 gap-8 bg-hub-text-primary/5">
+            <div className="space-y-4">
+               <div className="flex flex-col gap-1">
+                  <p className="text-[10px] opacity-60 leading-relaxed font-mono">
+                     Provision_At: {new Date(device.created_at).toLocaleString()}
+                  </p>
+               </div>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-end gap-3 self-end">
+               {!device.revoked ? (
+                 <>
+                   <button 
+                     onClick={(e) => { e.stopPropagation(); onRevoke(); }}
+                     className="px-6 h-10 rounded-xl border border-rose-500/20 hover:bg-rose-500/10 text-rose-500 text-[9px] font-black uppercase tracking-widest transition-all"
+                   >
+                     Revoke_Access
+                   </button>
+                   <button 
+                     onClick={(e) => { e.stopPropagation(); onRotateKey(); }}
+                     className="px-6 h-10 rounded-xl border border-hub-accent/20 hover:bg-hub-accent/10 text-hub-accent text-[9px] font-black uppercase tracking-widest transition-all shadow-lg shadow-hub-accent/5"
+                   >
+                     Rotate_Root_Key
+                   </button>
+                 </>
+               ) : (
+                 <>
+                   <button 
+                     onClick={(e) => { e.stopPropagation(); onRotateKey(); }}
+                     className="px-6 h-10 rounded-xl bg-hub-accent text-black text-[9px] font-black uppercase tracking-widest hover:bg-emerald-400 transition-all"
+                   >
+                     Resurrect_Handshake
+                   </button>
+                   <button 
+                     onClick={(e) => { e.stopPropagation(); onDelete(); }}
+                     className="px-6 h-10 rounded-xl border border-rose-500/10 hover:bg-rose-500/10 text-rose-500 text-[9px] font-black uppercase tracking-widest transition-all"
+                   >
+                     Purge_Record
+                   </button>
+                 </>
+               )}
+            </div>
+         </div>
       </div>
     </div>
   );

@@ -42,7 +42,7 @@ const OnboardingPage = () => {
             <input 
               type="text" 
               required
-              placeholder="Enter your system name"
+              placeholder="Enter your name"
               value={formData.name}
               onChange={(e) => setFormData({...formData, name: e.target.value})}
               className={`w-full px-5 py-4 ${inputBg} ${inputBorder} rounded-xl border-2 outline-none focus:border-emerald-500 transition-all text-sm`}

@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://127.0.0.1:8800/api/v1';
+import { apiClient } from './apiClient';
 
 /**
  * Custom Error for User Profile Failures
@@ -11,7 +11,7 @@ class UserError extends Error {
   }
 }
 
-const formatUserError = (data, fallback = 'SEQUENCE_FAILED') => {
+const formatUserError = (data, fallback = 'PROFILE_FETCH_FAILED') => {
   let message = data.detail || data.message || fallback;
   if (Array.isArray(message)) {
     message = message[0].msg || 'INVALID_PACKET_FORMAT';
@@ -28,24 +28,11 @@ export const userService = {
    */
   getProfile: async () => {
     try {
-      const accessToken = localStorage.getItem('access_token');
-      if (!accessToken) throw new Error('NO_TOKEN');
-
-      const response = await fetch(`${API_BASE_URL}/users`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${accessToken}`
-        }
-      });
-
-      const data = await response.json();
-
+      const { response, data } = await apiClient.request('/users');
       if (!response.ok) {
         throw new UserError(formatUserError(data, 'PROFILE_FETCH_FAILED'), response.status);
       }
-
-      return data; // { user_id, name, email, profile_image_url }
+      return data; 
     } catch (error) {
       if (error instanceof UserError) throw error;
       throw new Error('HUB_OFFLINE');
@@ -57,18 +44,11 @@ export const userService = {
    */
   onboard: async (onboardingData) => {
     try {
-      const accessToken = localStorage.getItem('access_token');
-      const response = await fetch(`${API_BASE_URL}/users`, {
+      const { response, data } = await apiClient.request('/users', {
         method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(onboardingData),
       });
-
-      const data = await response.json();
 
       if (!response.ok) {
         throw new UserError(formatUserError(data, 'ONBOARDING_FAILED'), response.status);

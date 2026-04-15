@@ -1,0 +1,92 @@
+/* SensorFloat.css - Premium Animations for IoT Entities */
+
+/* BASE EFFECTS */
+.sensor-float-container {
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+/* WATER_VARIATION: Wave Physics */
+.water-waves {
+    position: absolute;
+    bottom: -10%;
+    left: -50%;
+    width: 200%;
+    height: 100%;
+    background: radial-gradient(circle at 50% 100%, var(--hub-accent) 0%, transparent 70%);
+    opacity: 0.15;
+    border-radius: 40%;
+    animation: water-drift 15s infinite linear;
+    z-index: 0;
+}
+
+.water-waves::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 30% 100%, var(--hub-accent) 0%, transparent 60%);
+    opacity: 0.5;
+    border-radius: 45%;
+    animation: water-drift 18s infinite linear reverse;
+}
+
+@keyframes water-drift {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* AIR_VARIATION: Atmospheric Drift */
+.air-drift {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.air-particle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: var(--hub-accent);
+    border-radius: 50%;
+    opacity: 0.3;
+    filter: blur(1px);
+    animation: air-float var(--duration) infinite linear;
+}
+
+@keyframes air-float {
+    0% { transform: translateY(120%) translateX(var(--start-x)); opacity: 0; }
+    50% { opacity: 0.4; }
+    100% { transform: translateY(-20%) translateX(var(--end-x)); opacity: 0; }
+}
+
+/* GAS_VARIATION: Molecular Diffusion */
+.gas-aura {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, var(--hub-accent) 0%, transparent 60%);
+    opacity: 0.05;
+    filter: blur(40px);
+    animation: gas-pulse 4s ease-in-out infinite alternate;
+    z-index: 0;
+}
+
+@keyframes gas-pulse {
+    0% { transform: scale(0.8); opacity: 0.03; }
+    100% { transform: scale(1.2); opacity: 0.08; }
+}
+
+/* SHARED_MICRO_ANIMATIONS */
+.value-glitch {
+    animation: glitch-vibe 0.2s ease-out;
+}
+
+@keyframes glitch-vibe {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(2px); }
+    50% { transform: translateX(-2px); }
+    75% { transform: translateX(1px); }
+    100% { transform: translateX(0); }
+}

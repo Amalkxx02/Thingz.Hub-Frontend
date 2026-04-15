@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://127.0.0.1:8800/api/v1';
+import { apiClient } from './apiClient';
 
 class DeviceError extends Error {
   constructor(message, status) {
@@ -22,15 +22,7 @@ const formatError = (data, fallback = 'SEQUENCE_FAILED') => {
 export const deviceService = {
   getDevices: async () => {
     try {
-      const accessToken = localStorage.getItem('access_token');
-      const response = await fetch(`${API_BASE_URL}/devices`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${accessToken}`,
-        },
-      });
-      const data = await response.json();
+      const { response, data } = await apiClient.request('/devices');
       if (!response.ok) throw new DeviceError(formatError(data, 'SCAN_FAILURE'), response.status);
       return data;
     } catch (error) {
@@ -41,15 +33,7 @@ export const deviceService = {
 
   getDevice: async (id) => {
     try {
-      const accessToken = localStorage.getItem('access_token');
-      const response = await fetch(`${API_BASE_URL}/devices/${id}`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${accessToken}`,
-        },
-      });
-      const data = await response.json();
+      const { response, data } = await apiClient.request(`/devices/${id}`);
       if (!response.ok) throw new DeviceError(formatError(data, 'GET_NODE_FAILED'), response.status);
       return data;
     } catch (error) {
@@ -60,17 +44,11 @@ export const deviceService = {
 
   registerDevice: async (name, type) => {
     try {
-      const accessToken = localStorage.getItem('access_token');
-      const response = await fetch(`${API_BASE_URL}/devices`, {
+      const { response, data } = await apiClient.request('/devices', {
         method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`,
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, type }),
       });
-      const data = await response.json();
       if (!response.ok) throw new DeviceError(formatError(data, 'NODE_REGISTRATION_FAILED'), response.status);
       return data;
     } catch (error) {
@@ -81,15 +59,9 @@ export const deviceService = {
 
   deleteDevice: async (id) => {
     try {
-      const accessToken = localStorage.getItem('access_token');
-      const response = await fetch(`${API_BASE_URL}/devices/${id}`, {
+      const { response, data } = await apiClient.request(`/devices/${id}`, {
         method: 'DELETE',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${accessToken}`,
-        },
       });
-      const data = await response.json();
       if (!response.ok) throw new DeviceError(formatError(data, 'PURGE_FAILED'), response.status);
       return data;
     } catch (error) {
@@ -100,15 +72,9 @@ export const deviceService = {
 
   toggleStatus: async (id) => {
     try {
-      const accessToken = localStorage.getItem('access_token');
-      const response = await fetch(`${API_BASE_URL}/devices/${id}/status`, {
+      const { response, data } = await apiClient.request(`/devices/${id}/status`, {
         method: 'PATCH',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${accessToken}`,
-        },
       });
-      const data = await response.json();
       if (!response.ok) throw new DeviceError(formatError(data, 'STATUS_TOGGLE_FAILED'), response.status);
       return data;
     } catch (error) {
@@ -119,15 +85,9 @@ export const deviceService = {
 
   rotateKey: async (id) => {
     try {
-      const accessToken = localStorage.getItem('access_token');
-      const response = await fetch(`${API_BASE_URL}/devices/${id}/key`, {
+      const { response, data } = await apiClient.request(`/devices/${id}/key`, {
         method: 'PATCH',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${accessToken}`,
-        },
       });
-      const data = await response.json();
       if (!response.ok) throw new DeviceError(formatError(data, 'KEY_ROTATION_FAILED'), response.status);
       return data;
     } catch (error) {
@@ -138,20 +98,27 @@ export const deviceService = {
 
   revokeDevice: async (id) => {
     try {
-      const accessToken = localStorage.getItem('access_token');
-      const response = await fetch(`${API_BASE_URL}/devices/${id}/revoked`, {
+      const { response, data } = await apiClient.request(`/devices/${id}/revoked`, {
         method: 'PATCH',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${accessToken}`,
-        },
       });
-      const data = await response.json();
       if (!response.ok) throw new DeviceError(formatError(data, 'REVOCATION_FAILED'), response.status);
       return data;
     } catch (error) {
       if (error instanceof DeviceError) throw error;
       throw new Error('AUTH_SEQUENCE_INTERRUPTED');
+    }
+  },
+
+  revokeAllDevices: async () => {
+    try {
+      const { response, data } = await apiClient.request('/devices/revoked', {
+        method: 'PATCH',
+      });
+      if (!response.ok) throw new DeviceError(formatError(data, 'MASS_REVOCATION_FAILED'), response.status);
+      return data;
+    } catch (error) {
+      if (error instanceof DeviceError) throw error;
+      throw new Error('SYSTEM_AUTH_INTERRUPTED');
     }
   }
 };
