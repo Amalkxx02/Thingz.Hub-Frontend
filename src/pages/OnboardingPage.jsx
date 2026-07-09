@@ -1,76 +1,82 @@
-import React, { useState } from 'react';
-import Logo from '../components/Logo';
-import { useAuth, useTheme } from '../context';
+import React, { useState } from "react";
+import Logo from "../components/Logo";
+import { useAuth, useTheme } from "../context";
+import { useThemeStyles } from "../hooks/useThemeStyles";
 
 const OnboardingPage = () => {
-  const { onboard, loading } = useAuth();
+  const { onboard } = useAuth();
   const { theme } = useTheme();
   const [formData, setFormData] = useState({
-    name: '',
-    profile_image_url: ''
+    name: "",
+    image: "",
   });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.name) return;
-    await onboard(formData);
+    await onboard(formData.name, formData.image);
   };
 
-  const bgColor = theme === 'dark' ? 'bg-[#080808] text-white' : 'bg-[#F9FAFB] text-neutral-900';
-  const inputBg = theme === 'dark' ? 'bg-neutral-900' : 'bg-white';
-  const inputBorder = theme === 'dark' ? 'border-neutral-800' : 'border-neutral-200';
-  const buttonBg = theme === 'dark' ? 'bg-white text-neutral-900' : 'bg-black text-white';
+  const { bgColor, textColor, inputBg, inputBorder, buttonBg } =
+    useThemeStyles();
 
   return (
-    <div className={`min-h-screen w-full flex flex-col items-center justify-center p-6 transition-colors duration-500 ${bgColor}`}>
+    <div
+      className={`min-h-screen w-full flex flex-col items-center justify-center p-6 ${bgColor} ${textColor}`}
+    >
       <div className="absolute top-8 left-8">
         <Logo />
       </div>
-
-      <div className="max-w-md w-full animate-robotic-mid">
-        <div className="mb-8 overflow-hidden">
-          <div className="bg-emerald-500/10 text-emerald-500 text-[10px] font-black tracking-widest uppercase py-1 px-3 rounded inline-block mb-4">
-            Account_Setup
-          </div>
-          <h1 className="text-4xl font-black tracking-tighter mb-2">Build Profile.</h1>
-          <p className="opacity-40 text-sm font-mono">USER_AUTHENTICATION_SUCCESSFUL. PLEASE_PROVIDE_PROFILE_METADATA.</p>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* <h1 className="text-3xl font-bold">{content.h1}</h1> */}
+        <div className="space-y-2">
+          <label
+            htmlFor="name"
+            className="text-[10px] font-black uppercase tracking-[0.2em] opacity-30 px-1"
+          >
+            Full Name
+          </label>
+          <input
+            id="name"
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleInputChange}
+            placeholder="Enter your name"
+            required
+            className={`w-full px-5 py-4 ${inputBg} ${inputBorder} rounded-xl border-2 outline-none focus:border-emerald-500 text-sm`}
+          />
+        </div>
+        <div className="space-y-2">
+          <label
+            htmlFor="image"
+            className="text-[10px] font-black uppercase tracking-[0.2em] opacity-30 px-1"
+          >
+            Profile Image URL
+          </label>
+          <input
+            id="image"
+            type="url"
+            name="image"
+            value={formData.image}
+            onChange={handleInputChange}
+            placeholder="https://example.com/avatar.png"
+            className={`w-full px-5 py-4 ${inputBg} ${inputBorder} rounded-xl border-2 outline-none focus:border-emerald-500 text-sm`}
+          />
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-[0.2em] opacity-30 px-1">Full_Name</label>
-            <input 
-              type="text" 
-              required
-              placeholder="Enter your name"
-              value={formData.name}
-              onChange={(e) => setFormData({...formData, name: e.target.value})}
-              className={`w-full px-5 py-4 ${inputBg} ${inputBorder} rounded-xl border-2 outline-none focus:border-emerald-500 transition-all text-sm`}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-[0.2em] opacity-30 px-1">Profile_Image_URL</label>
-            <input 
-              type="url" 
-              placeholder="https://example.com/avatar.png"
-              value={formData.profile_image_url}
-              onChange={(e) => setFormData({...formData, profile_image_url: e.target.value})}
-              className={`w-full px-5 py-4 ${inputBg} ${inputBorder} rounded-xl border-2 outline-none focus:border-emerald-500 transition-all text-sm`}
-            />
-          </div>
-
-          <button 
-            type="submit"
-            disabled={loading}
-            className={`w-full py-5 ${buttonBg} rounded-xl font-black uppercase tracking-widest text-xs hover:opacity-90 transition-all shadow-xl disabled:opacity-50`}
-          >
-            {loading ? 'SYNCHRONIZING...' : 'Verify_Profile'}
-          </button>
-        </form>
-      </div>
-
-      <div className="iot-dots absolute inset-0 opacity-5 pointer-events-none" />
+        <button
+          type="submit"
+          className={`w-full py-5 ${buttonBg} rounded-xl font-black uppercase tracking-widest text-xs hover:opacity-90 shadow-xl disabled:opacity-50`}
+        >
+          onboard
+        </button>
+      </form>
     </div>
   );
 };
