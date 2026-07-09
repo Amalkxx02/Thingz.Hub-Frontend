@@ -1,75 +1,56 @@
-const API_BASE_URL = 'http://127.0.0.1:8000/api/v1';
+// const baseUrl = "http://127.0.0.1:8000/api/v1";
+const baseUrl = "http://192.168.1.54:8000/api/v1";
+
+
+const ironFetch = async (endpoint, customConfig = {}, useRefresh=false) => {
+  const headers = {
+    "Content-Type": "application/json",
+  };
+
+  const access_token = localStorage.getItem("access_token");
+  const refresh_token = localStorage.getItem("refresh_token");
+
+  if (access_token) {
+    headers["Authorization"] = `Bearer ${access_token}`;
+  }
+  if (useRefresh && refresh_token) {
+    headers["Authorization"] = `Bearer ${refresh_token}`;
+  }
+
+  const config = {
+    ...customConfig,
+    headers: { ...headers, ...customConfig.headers },
+  };
+
+  // If the request has a JSON body, turn the JS Object into a string
+  if (config.body && typeof config.body === "object") {
+    config.body = JSON.stringify(config.body);
+  }
+
+  const response = await fetch(`${baseUrl}${endpoint}`, config);
+
+  if (response.status === 401) {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    window.location.href = "/auth"; // <--- This was forcing the full page reload!
+    throw new Error("Session expired. Please log in again.");
+  }
+
+  const data = await response.json();
+  console.log(data)
+
+  if (!response.ok) {
+    throw new Error(
+      data.message || `Server rejected with status: ${response.status}`,
+    );
+  }
+
+  return data;
+};
 
 export const apiClient = {
-  /**
-   * Universal Request Wrapper with Automatic Token Refresh
-   */
-  request: async (endpoint, options = {}) => {
-    const url = `${API_BASE_URL}${endpoint}`;
-    
-    // 1. Prepare base options and headers
-    const accessToken = localStorage.getItem('access_token');
-    const headers = {
-      'Accept': 'application/json',
-      ...options.headers,
-    };
-    
-    // Add auth header if token exists
-    if (accessToken) {
-      headers['Authorization'] = `Bearer ${accessToken}`;
-    }
-
-    try {
-      // 2. Perform initial request
-      let response = await fetch(url, { ...options, headers });
-      let data = await response.json();
-
-      // 3. Check for Token Expiration (401 + specific detail)
-      if (response.status === 401 && data.detail && data.detail.token_expired) {
-        let refreshSuccessful = false;
-        try {
-          // 4. Attempt to Refresh Token
-          const refreshToken = localStorage.getItem('refresh_token');
-          if (!refreshToken) throw new Error('NO_REFRESH_TOKEN');
-
-          const refreshResponse = await fetch(`${API_BASE_URL}/auths/refresh`, {
-            method: 'POST',
-            headers: { 
-              'Accept': 'application/json',
-              'Authorization': `Bearer ${refreshToken}`
-            },
-          });
-          if (!refreshResponse.ok) throw new Error('REFRESH_SEQUENCE_FAILED');
-
-          const refreshData = await refreshResponse.json();
-          const newAccessToken = refreshData.access_token;
-
-          if (!newAccessToken) throw new Error('TOKEN_MALFORMED');
-
-          localStorage.setItem('access_token', newAccessToken);
-          refreshSuccessful = true;
-          
-          // 5. Update headers for retry
-          headers['Authorization'] = `Bearer ${newAccessToken}`;
-        } catch (refreshError) {
-          // 6. Refresh failed, purge session and exit
-          localStorage.removeItem('access_token');
-          localStorage.removeItem('refresh_token');
-          window.location.href = '/auth?expired=true';
-          throw new Error('SESSION_EXPIRED');
-        }
-
-        // 7. Perform the retry OUTSIDE the refresh try-catch to avoid logout on retry failure
-        if (refreshSuccessful) {
-          response = await fetch(url, { ...options, headers });
-          data = await response.json();
-        }
-      }
-
-      // Return both response and data for custom handling in services
-      return { response, data };
-    } catch (error) {
-      throw error;
-    }
-  }
+  get: (endpoint, useRefresh = false) => ironFetch(endpoint, { method: "GET" }, useRefresh),
+  post: (endpoint, body, useRefresh = false) => ironFetch(endpoint, { method: "POST", body }, useRefresh),
+  put: (endpoint, body) => ironFetch(endpoint, { method: "PUT", body }),
+  delete: (endpoint) => ironFetch(endpoint, { method: "DELETE" }),
 };

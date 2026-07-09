@@ -1,64 +1,30 @@
 import React, { useState } from "react";
 import Logo from "../components/Logo";
-import ThemeToggle from "../components/ThemeToggle";
-import { useTheme, useAuth } from "../context";
-import { useThemeStyles } from "../hooks/useThemeStyles";
-import "./AuthPage.css";
+import { InteractiveDotGrid } from "../components/styles/InteractiveDotGrid";
+import { LoginForm } from "../components/Auth/LoginForm";
+import { RecoveryForm } from "../components/Auth/RecoveryForm";
+import { RegisterForm } from "../components/Auth/RegisterForm";
 
 const AuthPage = () => {
-  const { theme } = useTheme();
-  const { login } = useAuth();
-  const [authMode, setAuthMode] = useState("login"); // 'login', 'register', 'recovery'
+  const [authMode, setAuthMode] = useState("sign_in"); // 'sign_in', 'sign_up', 'recovery'
 
-  // Form State
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
-
-  const { bgColor, textColor, inputBg, inputBorder, buttonBg } = useThemeStyles();
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleAuth = async (e) => {
-    e.preventDefault();
-    if (!formData.email) return;
-    if (authMode !== "recovery" && !formData.password) return;
-
-    try {
-      if (authMode === "login") {
-        await login(formData.email, formData.password);
-      }
-    } catch (err) {
-      // Errors are already handled by the context toasts
-    }
-  };
 
   const getPageContent = () => {
     switch (authMode) {
-      case "register":
+      case "sign_up":
         return {
-          h1: "Register Account.",
-          submitText: "Sign Up",
           toggleText: "Sign In",
-          toggleMode: "login",
+          toggleMode: "sign_in",
         };
       case "recovery":
         return {
-          h1: "Rest Password?",
-          submitText: "Reset",
           toggleText: "Sign In",
-          toggleMode: "login",
+          toggleMode: "sign_in",
         };
       default:
         return {
-          h1: "Login Account.",
-          submitText: "Sign In",
           toggleText: "Sign Up",
-          toggleMode: "register",
+          toggleMode: "sign_up",
         };
     }
   };
@@ -66,86 +32,67 @@ const AuthPage = () => {
   const content = getPageContent();
 
   return (
-    <div className={`min-h-screen flex ${bgColor} ${textColor}`}>
-      <ThemeToggle />
-      <div className="hidden lg:flex lg:w-[60%] bg-neutral-900 items-center justify-center">
-        <Logo />
+    <main
+      className={`relative min-h-[100dvh] w-full flex bg-[#0f172b]/50 text-white`}
+    >
+      <div
+        className="absolute inset-0 pointer-events-none z-0 "
+        style={{
+          maskImage:
+            "radial-gradient(farthest-corner at 50% 50%, #000 70%, transparent 100%)",
+          WebkitMaskImage:
+            "radial-gradient(farthest-corner at 50% 50%, #000 70%, transparent 100%)",
+        }}
+      >
+        <InteractiveDotGrid />
       </div>
-      <div className="w-full lg:w-[40%] flex flex-col items-center justify-center p-8">
-        <form onSubmit={handleAuth} className="space-y-6">
-          <h1 className="text-3xl font-bold">{content.h1}</h1>
-          <div className="space-y-2">
-            <label
-              htmlFor="email"
-              className="text-[10px] font-black uppercase tracking-[0.2em] opacity-30 px-1"
-            >
-              Email Address
-            </label>
-            <input
-              id="email"
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              placeholder="you@example.com"
-              required
-              autoComplete="email"
-              className={`w-full px-5 py-4 ${inputBg} ${inputBorder} rounded-xl border-2 outline-none focus:border-emerald-500 text-sm`}
-            />
+
+      {/* <div className="absolute inset-0 pointer-events-none z-0"></div> */}
+
+      <aside
+        className={`relative z-10 hidden lg:flex lg:w-3/5 items-center justify-center p-12 select-none overflow-hidden bg-transparent`}
+      >
+        <Logo className="text-5xl" />
+      </aside>
+
+      <section
+        className={`relative z-10 w-full lg:w-2/5 min-h-[100dvh] flex flex-col justify-between px-6 py-4  sm:px-12 sm:py-8 lg:p-12 overflow-y-auto bg-transparent`}
+      >
+
+        <div className="w-full max-w-sm mx-auto my-auto py-6">
+          <div key={authMode} className="w-full">
+            {authMode === "sign_in" && <LoginForm />}
+            {authMode === "sign_up" && <RegisterForm />}
+            {authMode === "recovery" && <RecoveryForm />}
           </div>
-          {authMode !== "recovery" && (
-            <div className="space-y-2">
-              <label
-                htmlFor="password"
-                className="text-[10px] font-black uppercase tracking-[0.2em] opacity-30 px-1"
-              >
-                Password
-              </label>
-              <input
-                id="password"
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleInputChange}
-                placeholder="••••••••"
-                required
-                autoComplete={
-                  authMode === "login" ? "current-password" : "new-password"
-                }
-                className={`w-full px-5 py-4 ${inputBg} ${inputBorder} rounded-xl border-2 outline-none focus:border-emerald-500 text-sm`}
-              />
-            </div>
-          )}
+        </div>
 
-          <button
-            type="submit"
-            className={`w-full py-5 ${buttonBg} rounded-xl font-black uppercase tracking-widest text-xs hover:opacity-90 shadow-xl disabled:opacity-50`}
-          >
-            {content.submitText}
-          </button>
-
-          <div className="flex flex-col items-center gap-2 mt-2 text-sm">
+        <div className="w-full h-20 flex flex-col items-center gap-4 pt-6 pb-4 sm:pb-0 text-sm text-center">
+          <p className="opacity-70">
+            {authMode === "sign_in"
+              ? "Don't have an account?"
+              : "Already have an account?"}{" "}
             <button
               type="button"
               onClick={() => setAuthMode(content.toggleMode)}
-              className={`w-full py-5 ${buttonBg} rounded-xl font-black uppercase tracking-widest text-xs hover:opacity-90 shadow-xl disabled:opacity-50`}
+              className="font-semibold underline underline-offset-4 hover:opacity-80 active:opacity-60 cursor-pointer ml-1"
             >
               {content.toggleText}
             </button>
+          </p>
 
-            {authMode === "login" && (
-              <button
-                type="button"
-                onClick={() => setAuthMode("recovery")}
-                className={`w-full py-5 ${buttonBg} rounded-xl font-black uppercase tracking-widest text-xs hover:opacity-90 shadow-xl disabled:opacity-50`}
-              >
-                Forgot your password?
-              </button>
-            )}
-          </div>
-        </form>
-      </div>
-    </div>
+          {authMode === "sign_in" && (
+            <button
+              type="button"
+              onClick={() => setAuthMode("recovery")}
+              className="text-xs opacity-50 hover:opacity-100 hover:underline transition-opacity cursor-pointer"
+            >
+              Forgot your password?
+            </button>
+          )}
+        </div>
+      </section>
+    </main>
   );
 };
 

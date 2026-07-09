@@ -1,11 +1,9 @@
-import React from 'react';
-import { useTheme } from '../../context';
+import React from "react";
 
 const Logo = ({ className = "" }) => {
-  const { theme } = useTheme();
   return (
     <div className={`flex items-center select-none ${className}`}>
-      <span className={`font-black text-2xl tracking-tighter uppercase ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
+      <span className="tracking-tighter uppercase text-emerald-500">
         Thingz.Hub
       </span>
     </div>

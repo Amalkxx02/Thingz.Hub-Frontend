@@ -2,22 +2,16 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
 import Logo from "../components/Logo";
-import { useAuth, useTheme } from "../context";
-import { useThemeStyles } from "../hooks/useThemeStyles";
 
 import ProfileDropdown from "../components/Dashboard/ProfileDropdown";
 
-import DevicesManager from "../components/Dashboard/DevicesManager";
-import ThingsManager from "../components/Dashboard/ThingsManager";
+import DevicesManager from "../components/Dashboard/Devices/DevicesManager";
+import DeviceDetails from "../components/Dashboard/Devices/DeviceDetails";
+import ThingsManager from "../components/Dashboard/Things/ThingsManager";
 import HomeManager from "../components/Dashboard/HomeManager";
+import { VectorBackground } from "../components/styles/VectorBackground";
 
 const Dashboard = ({ page = "" }) => {
-  const { user } = useAuth();
-  const { theme } = useTheme();
-
-  const { bgColor, textColor, inputBg, inputBorder, buttonBg } =
-    useThemeStyles();
-
   // React.useEffect(() => {
   //   const fetchActive = async () => {
   //     try {
@@ -63,6 +57,11 @@ const Dashboard = ({ page = "" }) => {
           subtitle: "TOTAL_VIRTUAL_OBJECTS",
           // count: cachedThings.length,
         };
+      case "device":
+        return {
+          title: "Device_Details",
+          subtitle: "NODE_INSPECTION",
+        };
       default:
         return {
           title: "Hub_Dashboard",
@@ -78,10 +77,15 @@ const Dashboard = ({ page = "" }) => {
     switch (page) {
       case "":
         return <HomeManager />;
+
       case "devices":
         return <DevicesManager />;
+      case "device":
+        return <DeviceDetails />;
+
       case "things":
         return <ThingsManager />;
+
       default:
         return <HomeManager />;
     }
@@ -89,51 +93,94 @@ const Dashboard = ({ page = "" }) => {
 
   return (
     <div
-      className={`min-h-screen w-full flex overflow-hidden ${bgColor} ${textColor}`}
+      className={`relative h-[100dvh] w-full flex flex-col overflow-hidden bg-[#0B0E14] text-white`}
     >
-      <aside className="hidden md:flex w-48 flex-col border-r border-neutral-800 p-6">
-        <div className="mb-8 hover:opacity-80 inline-block">
+      <VectorBackground />
+
+      <header
+        className={`relative z-30 shrink-0 flex items-center justify-between py-2 px-2 border-b border-emerald-500/25 bg-[#0B0E14]/75 backdrop-blur-[5px]`}
+      >
+        {/*  backdrop-blur-[5px] */}
+        <div>
           <Link to="/">
-            <Logo />
+            <h2 className="text-xl font-bold">
+              <Logo />
+            </h2>
           </Link>
         </div>
+        <div>
+          <ProfileDropdown />
+        </div>
+      </header>
 
-        <nav className="flex flex-col gap-2 mt-4">
-          <p className="opacity-50 text-xs font-mono mb-2">NAVIGATION</p>
+      <div className="flex flex-1 overflow-hidden relative z-20 ">
+        <aside
+          className={`hidden md:flex w-15 hover:w-30 transition-all duration-200 ease-in-out flex-col items-center py-2 group overflow-hidden border-r border-emerald-500/25 bg-[#0B0E14]/75 backdrop-blur-[2px]`}
+        >
+          <nav className="flex flex-col gap-2 mt-auto w-full px-2">
+            <p className="opacity-0 group-hover:opacity-50 text-xs font-mono mb-2 text-center transition-opacity duration-300 whitespace-nowrap overflow-hidden">
+              NAVIGATION
+            </p>
 
-          {navLinks.map((link) => {
-            const isActive = page === link.id;
+            {navLinks.map((link) => {
+              const isActive = page === link.id;
 
-            return (
-              <Link
-                key={link.id}
-                to={link.path}
-                className={`px-4 py-3 rounded-xl font-bold text-sm transition-all duration-300 ${
-                  isActive
-                    ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/20"
-                    : "hover:bg-neutral-500/10 opacity-60 hover:opacity-100"
-                }`}
-              >
-                {link.label}
-              </Link>
-            );
-          })}
-        </nav>
-      </aside>
+              return (
+                <Link
+                  key={link.id}
+                  to={link.path}
+                  className={`h-11 rounded-xl font-bold text-sm transition-all duration-300 flex items-center overflow-hidden whitespace-nowrap ${
+                    isActive
+                      ? `bg-neutral-800 text-white`
+                      : "hover:bg-neutral-500/10 opacity-80 hover:opacity-100"
+                  }`}
+                >
+                  <div className="min-w-[2rem] flex items-center justify-center text-lg">
+                    {link.label.charAt(0)}
+                  </div>
+                  <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    {link.label}
+                  </span>
+                </Link>
+              );
+            })}
+          </nav>
+        </aside>
 
-      <main className="flex-1 flex flex-col h-screen relative">
-        <header className="h-20 flex items-center justify-between px-8 border-b border-neutral-800">
-          <div>
-            <h2 className="text-xl font-bold">{header.title}</h2>
-            <p className="text-xs opacity-50 font-mono">{header.subtitle} 0</p>
+        <main className="flex-1 flex flex-col relative overflow-hidden">
+          <div className="flex-1 overflow-y-auto p-1 md:p-2">
+            {renderContent()}
           </div>
-          <div>
-            <ProfileDropdown />
-          </div>
-        </header>
+        </main>
+      </div>
 
-        <div className="flex-1 overflow-y-auto p-8">{renderContent()}</div>
-      </main>
+      {/* Bottom Navigation for Mobile */}
+      <nav className="md:hidden relative z-30 shrink-0 flex items-center justify-around w-full border-t border-emerald-500/25 bg-[#020618]/85 backdrop-blur-md p-2">
+        <Link
+          to="/"
+          className={`flex flex-col items-center justify-center w-16 h-12 rounded-xl transition-all duration-300 ${
+            page === "" ? "bg-emerald-500/10 text-emerald-400" : "text-slate-400 hover:text-white"
+          }`}
+        >
+          <span className="text-xl font-bold">H</span>
+          <span className="text-[10px] font-mono mt-0.5">Home</span>
+        </Link>
+        {navLinks.map((link) => {
+          const isActive = page === link.id;
+          return (
+            <Link
+              key={link.id}
+              to={link.path}
+              className={`flex flex-col items-center justify-center w-16 h-12 rounded-xl transition-all duration-300 ${
+                isActive ? "bg-emerald-500/10 text-emerald-400" : "text-slate-400 hover:text-white"
+              }`}
+            >
+              <span className="text-xl font-bold">{link.label.charAt(0)}</span>
+              <span className="text-[10px] font-mono mt-0.5">{link.label}</span>
+            </Link>
+          );
+        })}
+      </nav>
     </div>
   );
 };
